@@ -1,0 +1,125 @@
+<template>
+    <button class="slds-button slds-button_brand slds-button_stretch" title="Update Email"
+        onclick={openEmailModel}>Update Email</button>
+    <div if:true={showEmailModel}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={cancelEmailModal}>
+                        <lightning-icon icon-name="utility:close" size="medium">
+                        </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 class="slds-modal__title slds-hyphenate"> Update Email</h2>
+                </header>
+                <div class="slds-modal__content slds-var-p-around_medium" id="modal-content-id-3">
+                    <div if:true={showUsername}>
+                        <label class="slds-form-element__label style userstyle"> Username </label>
+                        <div class="userstyle"> {responseWrapper.userDetails.username}</div>
+                    </div>
+                    <div if:true={showEmail}>
+                        <div if:false={editEmail}>
+                            <lightning-layout multiple-rows>
+                                <lightning-layout-item size="6">
+                                    <label class="slds-form-element__label style userstyle"> Email </label>
+                                    <div class="userstyle"> {responseWrapper.userDetails.email}</div>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="6">
+                                    <label class="slds-form-element__label style userstyle"> Contact Email </label>
+                                    <div class="userstyle"> {responseWrapper.conDetails.conEmail}</div>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                        <div if:true={editEmail}>
+                            <lightning-layout multiple-rows>
+                                <lightning-layout-item size="6">
+                                    <lightning-input class="inputClass" type="email" autocomplete="none"
+                                        value={responseWrapper.userDetails.email} label="Email" name="email"
+                                        style="width: 100%;" onchange={handleInput} disabled={disableEmail} required>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="6">
+                                    <lightning-input class="inputClass" type="email" autocomplete="none"
+                                        value={responseWrapper.conDetails.conEmail} label="Contact Email"
+                                        name="conEmail" style="width: 100%;" onchange={handleInput} disabled>
+                                    </lightning-input>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                    </div>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="brand-outline" label="Close" onclick={cancelEmailModal}
+                        class="v-btn btn-md btn-primary slds-float_left"></lightning-button>
+                    <lightning-button if:true={editEmail} variant="brand" label='Save' type="submit"
+                        onclick={handleEmailSave} class="v-btn btn-md btn-reset padding">
+                    </lightning-button>
+                    <lightning-button if:true={showResetPassword} variant="brand" label='Reset Password' type="submit"
+                        onclick={handleResetPassword} class="v-btn btn-md btn-primary">
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+
+    <template if:true={showConfirmationModal}>
+        <section role="dialog" tabindex="-1" aria-label="Meaningful description of the modal content" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h4>Confirmation?</h4>
+                    <button onclick={cancelUpdateEmailModal}
+                        class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                        <lightning-icon icon-name="utility:close" size="medium">
+                        </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </header>
+                <div class="slds-modal__content slds-var-p-around_medium style">
+                    <p>Are you sure you want to update the Email?</p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="brand" label="Yes" type="button" onclick={handleSaveContinue}
+                        class="v-btn btn-md btn-primary padding">
+                    </lightning-button>
+
+                    <lightning-button variant="brand-outline" label="No" type="button" onclick={cancelUpdateEmailModal}
+                        class="v-btn btn-md btn-reset">
+                    </lightning-button>
+
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template if:true={emailConfirmationModal}>
+        <section role="dialog" tabindex="-1" aria-label="Meaningful description of the modal content" aria-modal="true"
+            aria-describedby="modal-content-id-4" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+                        title="Close" onclick={cancelConfirmationModal}>
+                        <lightning-icon icon-name="utility:close" size="medium">
+                        </lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h4></h4>
+                </header>
+                <div class="slds-modal__content slds-var-p-around_medium style">
+                    Email has been updated
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="brand-outline" label="Close" type="button"
+                        onclick={cancelConfirmationModal} class="v-btn btn-md btn-reset">
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+</template>
