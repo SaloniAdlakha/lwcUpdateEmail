@@ -1,0 +1,119 @@
+public without sharing class UpdateEmailController {
+    
+    @AuraEnabled
+    public static ContactWrapper doInitContactAddress(String contactId){
+        try{
+            Contact contact = [SELECT Id, Email, Phone,
+                MailingStreet, MailingCity, MailingState, MailingPostalCode
+                FROM Contact
+                WHERE Id =: contactId
+            ];
+            ContactWrapper wrapper = (new ContactWrapper()).getContactAddress(contact);
+            return wrapper; 
+        }catch (Exception ex) {
+            throw new AuraHandledException(ex.getMessage());
+        }  
+    }
+
+    @AuraEnabled
+    public static void saveContactAddress(String responseWrapper, String contactId){
+        ContactWrapper wrap;
+        try{
+            if(!String.isEmpty(responseWrapper) && !String.isEmpty(contactId)){
+                wrap = (ContactWrapper) JSON.deserialize(responseWrapper, ContactWrapper.class);
+                    Contact con = new Contact();
+                    con.Id = contactId;
+                    con.Phone = wrap.phone;
+                    con.MailingStreet = wrap.mailingStreet;
+                    con.MailingCity = wrap.mailingCity;
+                    con.MailingState = wrap.mailingState;
+                    con.MailingPostalCode = wrap.mailingPostalCode;
+                    con.Email = wrap.conEmail;
+                    update con;
+            } 
+        } catch (Exception ex) {
+            throw new AuraHandledException(ex.getMessage());
+        }  
+    }
+
+    @AuraEnabled
+    public static UserWrapper doInitUserDetails(String contactId){
+        User user = [SELECT Id, Username,Email FROM User WHERE ContactId =: contactId];
+        UserWrapper wrapper = (new UserWrapper()).getUserDetails(user);
+        return wrapper; 
+    }
+
+    @AuraEnabled
+    public static void saveUserDetails(String responseWrapper , String userId){
+        UserWrapper wrap;
+        try{
+            if(!String.isEmpty(responseWrapper) && !String.isEmpty(userId)){
+                wrap = (UserWrapper) JSON.deserialize(responseWrapper, UserWrapper.class);
+                    User user = new User();
+                    user.Id = userId;
+                    user.Email = wrap.email;
+                    user.Username = wrap.username;
+                    update user;
+            } 
+        } catch (Exception ex) {
+            throw new AuraHandledException(ex.getMessage());
+        }  
+    }
+
+    @AuraEnabled
+    public static String resetPassword(String username) {
+        User user =[SELECT Id FROM User WHERE Username =: username];
+        if(!Site.isValidUsername(username)) {
+            return Label.Site.invalid_email;
+        }
+        if(username!= null || username!=''){
+            System.resetPassword(user.Id,true);          
+        } else{
+        }
+        return 'success';
+    }
+
+    public class ContactWrapper{
+        @AuraEnabled public String Id;
+        @AuraEnabled public String phone;
+        @AuraEnabled public String mailingStreet;
+        @AuraEnabled public String mailingState;
+        @AuraEnabled public String mailingCity;
+        @AuraEnabled public String mailingPostalCode;
+        @AuraEnabled public String conEmail;
+        public ContactWrapper getContactAddress(Contact con) {
+            try{
+                ContactWrapper wrap = new ContactWrapper();
+                wrap.Id = con.Id;
+                wrap.phone =  con.Phone;
+                wrap.mailingStreet = con.MailingStreet;
+                wrap.mailingCity = con.MailingCity;
+                wrap.mailingState = con.MailingState;
+                wrap.mailingPostalCode = con.MailingPostalCode;
+                wrap.conEmail = con.Email; 
+                return wrap;
+            }
+            catch(Exception ex){
+                throw new AuraHandledException(ex.getMessage());
+            }
+        }
+    }
+
+    public class UserWrapper{
+        @AuraEnabled public String Id;
+        @AuraEnabled public String username;
+        @AuraEnabled public String email;
+        public UserWrapper getUserDetails(User user) {
+            try{
+                UserWrapper wrap = new UserWrapper();
+                    wrap.Id =  user.Id;
+                    wrap.username = user.Username;
+                    wrap.email = user.Email; 
+                    return wrap;
+            }catch(Exception ex){
+                throw new AuraHandledException(ex.getMessage());
+            }
+        } 
+    }
+
+}
