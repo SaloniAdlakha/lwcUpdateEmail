@@ -15,7 +15,7 @@ import saveContactAddress from '@salesforce/apex/UpdateEmailController.saveConta
 import saveUserDetails from '@salesforce/apex/UpdateEmailController.saveUserDetails';
 import resetPassword from '@salesforce/apex/UpdateEmailController.resetPassword';
 
-export default class PuaUpdateEmail extends NavigationMixin(LightningElement) {
+export default class LwcUpdateEmail extends NavigationMixin(LightningElement) {
 
     @api showEmail;
     @api showResetPassword;
